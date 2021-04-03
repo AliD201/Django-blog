@@ -32,5 +32,46 @@
         </div>
     </form>
   </div>
+  
+  <div>
+    <table class="table table-striped border mb-0 permissions-table" style="cursor: pointer;">
+      <thead>
+        <tr >
+          <th scope="col" data-toggle="collapse" data-target="#demo1" class="accordion-toggle collapsed" >
+            
+            <a  >
+               Allowed Permissions 
+              <i class="fa float-right" aria-hidden="true">
+              </i>
+            </a>
+          </th>
+        </tr>
+      </thead>
+    </table>
+<div class="accordian-body collapse" id="demo1">
+
+<table class="table table-striped border" style="margin-bottom: 100px; " >
+<thead>
+
+</thead>
+
+<tbody >
+  
+    {% if permissions%}
+    {% for permission in permissions%}
+    <tr>
+      <td>{{permission}}</td>
+    </tr>
+    {% endfor%}
+    {%else%}
+    <tr>
+      <td>None</td>
+    </tr>
+    {% endif %}
+    
+</tbody>
+</table>
+</div>
+</div>
  
 {% endblock content %}

@@ -22,7 +22,7 @@ urlpatterns = [
     # path('', views.home, name='blog-home'),
     path('user-details/', views.user_view, name='user-view-apo'),
     path('register', views.registration, name='user-register-api'),
-    path('login', auth_token_views.obtain_auth_token,name='user-login-api'),
+    # path('login', auth_token_views.obtain_auth_token,name='user-login-api'),
     path('user-update', views.user_update, name='use-update-api'),
 
 

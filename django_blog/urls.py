@@ -19,6 +19,10 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 from django.contrib.auth import views as auth_views
 from users import views as user_views
@@ -33,17 +37,21 @@ urlpatterns = [
     path('profile/', user_views.profile, name = 'profile'),
     path('password-reset/',
     # this page doesn't send errors if the email doesn't exist 
-    auth_views.PasswordResetView
+    user_views.MyPasswordResetView
     .as_view(template_name='users/password_reset.html', form_class=EmailValidationOnForgotPassword), name = 'password_reset'),
     path('password-reset-done/',
-    auth_views.PasswordResetDoneView.as_view(template_name='users/password_reset_done.html'), name = 'password_reset_done'),
-    path('password-reset-confirm/<uidb64>/<token>/',auth_views.PasswordResetConfirmView.as_view(template_name='users/password_reset_confirm.html'), name = 'password_reset_confirm'),
+    user_views.MyPasswordResetDoneView.as_view(template_name='users/password_reset_done.html'), name = 'password_reset_done'),
+    path('password-reset-confirm/<uidb64>/<token>/',user_views.MyPasswordResetConfirmView.as_view(template_name='users/password_reset_confirm.html'), name = 'password_reset_confirm'),
     path('password-reset-complete/',
-    auth_views.PasswordResetCompleteView.as_view(template_name='users/password_reset_complete.html'), name = 'password_reset_complete'),
+    user_views.MyPasswordResetCompleteView.as_view(template_name='users/password_reset_complete.html'), name = 'password_reset_complete'),
 
 
     # Rest FRAME WORK 
     path('api/users/', include('users.api.urls', 'users_api')),
+
+    #simple jwt
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
 ]
 if settings.DEBUG:

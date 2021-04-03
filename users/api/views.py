@@ -38,12 +38,15 @@ def registration(request):
 def user_view(request):
     try:
         user = request.user
+        profile = Profile.objects.get(user= user)
     except: 
         return Response(status= status.HTTP_404_NOT_FOUND)
 
     if request.method == "GET":
         serializer = UserSerializer(user)
-        return Response( serializer.data)
+        myDict = serializer.data
+        myDict['profile']=(user.profile.image.url)
+        return Response( myDict)
 
 
 
@@ -70,3 +73,6 @@ def user_update(request):
 
 # @api_view(['POST'])
 # def registration(request):
+
+# department - post per department 
+# Hr - admin, supervisor ( different access permissions)

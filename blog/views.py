@@ -3,8 +3,12 @@ from django.http import HttpResponse
 from .models import Post
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import user_passes_test
-
-
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
+from django_blog.decorators import group_check
+# from django_blog.helpers import get_department, can_edit
+from django_blog.roles import CanEdit as can_edit
+from django_blog.roles import canCreate
 # class views 
 from django.views.generic import (
     ListView,
@@ -52,6 +56,7 @@ class PostListView(ListView):
     ordering = ['-date_posted']
     # this will make it possible to have multiple pages 
     paginate_by = 4
+  
 
 def about (request):
     return render(request, 'blog/about.html', {'title': 'About'})
@@ -61,9 +66,19 @@ def about (request):
 class PostDetailView(DetailView):
     # required
     model = Post
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['canEdit'] = can_edit( self.request.user)
+        return context
+
+    # department = get_department(Post.author)
+    # def dispatch(self, *args, **kwargs):
+    #     print("dispatching")
+    #     return super().dispatch(*args, **kwargs)
 
 
-class PostCreateView(LoginRequiredMixin, CreateView):
+
+class PostCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     # class views look form app/model_form
     model = Post
     fields = ['title', 'content']
@@ -71,6 +86,16 @@ class PostCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self,form):
         form.instance.author = self.request.user
         return super().form_valid(form)
+
+    def test_func(self):
+        user = self.request.user
+        if canCreate(user):
+            return True
+        else:
+            return False
+
+
+    
 
 #login required and check if the updater is the same user
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -78,17 +103,20 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
     fields = ['title', 'content']
 
+
     def form_valid(self,form):
-        form.instance.author = self.request.user
+        # form.instance.author = self.request.user
+        form.instance.author = self.get_object().author
         return super().form_valid(form)
     
 
     def test_func(self):
-        post = self.get_object()
-        if self.request.user == post.author:
-            return True
-        else:
-            return False
+        # post = self.get_object()
+        user = self.request.user
+        return can_edit( user)
+
+  
+    
 
     
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
@@ -98,10 +126,9 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     success_url = '/'
     def test_func(self):
         post = self.get_object()
-        if self.request.user == post.author:
-            return True
-        else:
-            return False
+        return can_edit( self.request.user)
+
+
 
 
 # class home view

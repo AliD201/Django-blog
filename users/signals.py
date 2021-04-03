@@ -23,9 +23,9 @@ def save_profile(sender, instance, **kwargs):
 
 # this have been sepperated from the create profile function to clairfy what it is doing
 # and imply some sepration between the two processes 
-@receiver(post_save, sender=settings.AUTH_USER_MODEL)
-def create_auth_token(sender, instance=None, created=False, **kwargs):
-    print('signal three recieved')
-    # when the user is created generate a token
-    if created:
-        Token.objects.create(user=instance)
+# @receiver(post_save, sender=settings.AUTH_USER_MODEL)
+# def create_auth_token(sender, instance=None, created=False, **kwargs):
+#     print('signal three recieved')
+#     # when the user is created generate a token
+#     if created:
+#         Token.objects.create(user=instance)

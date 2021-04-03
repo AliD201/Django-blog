@@ -6,7 +6,13 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.generics import ListAPIView
 from rest_framework.filters import SearchFilter, OrderingFilter
 
-from rest_framework.authentication import TokenAuthentication
+# from rest_framework.authentication import TokenAuthentication
+
+from rest_framework_simplejwt.authentication import JWTAuthentication 
+
+from django_blog.roles import CanEdit as can_edit
+from django_blog.roles import canCreate
+
 
 from django.contrib.auth.models import User
 from blog.models import Post 
@@ -48,7 +54,7 @@ def post_update(request, id):
         return Response(status= status.HTTP_404_NOT_FOUND)
 
     user = request.user
-    if blog_post.author != user:
+    if not can_edit( user):
             return Response( {'response': "You don't have permission to edit this post "})
 
     if request.method == 'PUT':
@@ -71,7 +77,7 @@ def post_delete(request, id):
         return Response(status= status.HTTP_404_NOT_FOUND)
     
     user = request.user
-    if blog_post.author != user:
+    if not can_edit( user):
             return Response( {'response': "You don't have permission to edit this post "})
 
     if request.method == 'DELETE':
@@ -91,7 +97,10 @@ def post_create(request):
     blog_post = Post(author=user)
     blog_post.date_posted = now = datetime.datetime.now().isoformat(sep='T') + 'Z'
 
-    if request.method == 'POST':
+    if not canCreate(user):
+        return Response( {'response': "You don't have permission to create a new post "})
+
+    if request.method == 'POST' :
         serializer = PostSerializer(blog_post, data= request.data)
         print(serializer)
         if serializer.is_valid():
@@ -105,7 +114,7 @@ class post_list_view(ListAPIView):
     queryset = Post.objects.all()
     
     serializer_class = PostSerializer
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     pagination_class = PageNumberPagination
     filter_backends = ( SearchFilter, OrderingFilter)

@@ -36,7 +36,7 @@ class UserUpdateForm(forms.ModelForm):
 
 
 class ProfileUpdateForm(forms.ModelForm):
-    # image = forms.ImageField(default ='default.jpg', upload_to='profile_pics', attr={'class':'formfix'})
+    # image = forms.ImageField(default ='default.jpg', upload_to='profile_pics')
     class Meta:
         # save to the user model ( dB)
         model = Profile
@@ -51,7 +51,13 @@ class EmailValidationOnForgotPassword(PasswordResetForm):
 
     def clean_email(self):
         email = self.cleaned_data['email']
-        if not User.objects.filter(email__iexact=email, is_active=True).exists():
-            msg = _("There is no user registered with the specified E-Mail address.")
+        if not User.objects.filter(email__exact=email, is_active=True).exists():
+            msg = ("There is no user registered with the specified E-Mail address.")
             self.add_error('email', msg)
         return email    
+    
+    def dispatch(self, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            return redirect('blog-home')
+        print('hi')
+        return super().dispatch(*args, **kwargs)
