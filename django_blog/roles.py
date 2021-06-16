@@ -13,7 +13,7 @@ class Writer(AbstractUserRole):
     available_permissions = {
         'create_blog': True,
         'delete_blog': False,
-        'edit_blog': False,
+        'edit_blog': True,
     }
 
 class Reader(AbstractUserRole):
@@ -25,8 +25,8 @@ class Reader(AbstractUserRole):
 
 def CanEdit(User):
     try:
-        permissions = available_perm_status(User)
-        if permissions['edit_blog']:
+        # permissions =available_perm_status(User)
+        if User.has_perm('auth.edit_blog'):
             return True
         else:
             return False
@@ -35,8 +35,19 @@ def CanEdit(User):
     
 def canCreate(User):
     try:
-        permissions = available_perm_status(User)
-        if permissions['create_blog']:
+        # permissions =available_perm_status(User)
+        # print(User.get_all_permissions())
+        if User.has_perm('auth.create_blog'):
+            return True
+        else:
+            return False
+    except:
+        return False
+
+def canDelete(User):
+    try:
+        # permissions =available_perm_status(User)
+        if User.has_perm('auth.delete_blog'):
             return True
         else:
             return False

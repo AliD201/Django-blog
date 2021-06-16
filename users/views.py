@@ -3,6 +3,7 @@ from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import views as auth_views
+from django.contrib.auth.models import User
 import re
 # from django.db import models
 
@@ -14,6 +15,8 @@ def register(request):
         if form.is_valid():
             form.save() # store the user 
             username = form.cleaned_data.get('username')
+            # user = User.objects.get(username=username)
+            # print( user.get_all_permissions() , " new user permissiosn")
             messages.success(request,f'  {username}  account created succefully')
             return redirect('login')
     else:
@@ -22,6 +25,8 @@ def register(request):
         form = UserRegisterForm()
 
     return render(request, 'users/register.html', {'form': form} )
+
+
 
 @login_required
 def profile(request):
@@ -32,8 +37,11 @@ def profile(request):
         instance = request.user.profile)
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
+          
             profile_form.save()
+
             messages.success(request,f'account information updated succefully')
+           
             # this redirect is to prevent the re-submitting message from the browser
             return redirect('profile')
            

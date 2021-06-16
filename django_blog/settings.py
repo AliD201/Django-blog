@@ -56,7 +56,9 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -126,6 +128,13 @@ USE_L10N = True
 
 USE_TZ = True
 
+#cache
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'my_cache_table',
+    }
+}
 
 #REST frame work auth 
 REST_FRAMEWORK = {
@@ -200,6 +209,9 @@ print("-|||||||||||||||||||||||||-")
 ROLEPERMISSIONS_MODULE = 'django_blog.roles'
 ROLEPERMISSIONS_REGISTER_ADMIN = True
 
-
+ALLOWED_HOSTS = [
+    '192.168.8.100',
+    '127.0.0.1',
+]
 
 
