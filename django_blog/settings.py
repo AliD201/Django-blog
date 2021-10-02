@@ -28,8 +28,11 @@ SECRET_KEY = '^4&$3fg31e$pi=jpszw@_+qjkvhgjc9$pzi(ixp$sjh3%5xz71'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = [
+    '192.168.8.100',
+    '127.0.0.1',
+    '192.168.43.221'
+]
 
 # Application definition
 
@@ -42,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'blog',
+    'deal.apps.DealConfig',
     'users.apps.UsersConfig',
     'crispy_forms',
     'rest_framework',
@@ -56,9 +60,16 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+AUTHENTICATION_BACKENDS  = [
+
+    # 'django.contrib.auth.backends.ModelBackend',
+    'django_blog.backend.UserBackend'
 ]
 
 ROOT_URLCONF = 'django_blog.urls'
@@ -126,6 +137,16 @@ USE_L10N = True
 
 USE_TZ = True
 
+#cache
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'my_cache_table',
+    }
+}
+
+PIPEDRIVE_TOKEN = '65fbf2612b2f117e754d51246c936b66d837c81f'
+PIPEDRIVE_DOMAIN = 'kfu'
 
 #REST frame work auth 
 REST_FRAMEWORK = {
@@ -189,11 +210,11 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
-EMAIL_HOST_USER = os.environ.get('EMAIL_USER')#
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASS') #
+# EMAIL_HOST_USER = os.environ.get('EMAIL_USER')#
+# EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASS') #
 
 print("----------------------------")
-print(EMAIL_HOST_USER, EMAIL_HOST_PASSWORD)
+# print(EMAIL_HOST_USER, EMAIL_HOST_PASSWORD)
 print("-|||||||||||||||||||||||||-")
 
 

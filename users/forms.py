@@ -5,6 +5,8 @@ from .models import Profile
 
 from django.contrib.auth.forms import PasswordResetForm
 
+import requests
+from django.core.exceptions import ValidationError
 # registration form 
 class UserRegisterForm(UserCreationForm):
     email = forms.EmailField()
@@ -19,6 +21,40 @@ class UserRegisterForm(UserCreationForm):
             'password1',
             'password2',
         ]
+    def clean(self):
+        cleaned_data= super().clean()
+        print('entered cleaning')
+        try:
+            myuser = User.objects.get(username=cleaned_data['username'])
+            print(myuser.id)
+            response = requests.get(f'http://127.0.0.1:8001/api/users/user-details/{myuser.id}/',  headers={ 'Authorization': 'Token e9e3d12642ed1b16a093d24951ed9efed1de413c'})
+            try:
+                if response.status_code == 404:
+                    print('user deleteing')
+                    myuser.delete()
+                    print('user deleteing')
+            except:
+                pass
+        except:
+            # user isn't present in app database
+            pass
+        data = cleaned_data
+        data['password'] = data.pop('password1')
+        # data['password'] = make_password(data.pop('password1'))
+        data['password2'] = data['password']
+        print("MYDATA")
+        response = requests.post('http://127.0.0.1:8001/api/users/register', data = cleaned_data, headers={ 'Authorization': 'Token e9e3d12642ed1b16a093d24951ed9efed1de413c'})
+        try :
+            response = response.json()
+            print(" MY response ")
+            print(response)
+            if not response.__contains__('response'):
+                print("in")
+                raise ValidationError(response)
+        except:
+            raise ValidationError(response)
+        print('cleaning', cleaned_data)
+
 
 
 #  update user profile 
@@ -36,9 +72,8 @@ class UserUpdateForm(forms.ModelForm):
 
 
 class ProfileUpdateForm(forms.ModelForm):
-    # image = forms.ImageField(default ='default.jpg', upload_to='profile_pics')
     class Meta:
-        # save to the user model ( dB)
+        # save to the profile model ( dB)
         model = Profile
         # what form fields to use and in what order
         fields =[

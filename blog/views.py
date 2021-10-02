@@ -9,6 +9,7 @@ from django_blog.decorators import group_check
 # from django_blog.helpers import get_department, can_edit
 from django_blog.roles import CanEdit as can_edit
 from django_blog.roles import canCreate
+from django_blog.roles import canDelete
 # class views 
 from django.views.generic import (
     ListView,
@@ -69,6 +70,7 @@ class PostDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['canEdit'] = can_edit( self.request.user)
+        context['canDelete'] = canDelete( self.request.user)
         return context
 
     # department = get_department(Post.author)
@@ -126,7 +128,7 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     success_url = '/'
     def test_func(self):
         post = self.get_object()
-        return can_edit( self.request.user)
+        return canDelete( self.request.user)
 
 
 

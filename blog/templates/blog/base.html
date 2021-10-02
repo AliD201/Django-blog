@@ -17,7 +17,13 @@
     <title>Django BLog</title>
     {% endif %}</head>
 </head>
-
+<style>
+  .deal-row{
+    border: 1px solid rgba(0,0,0,0.125);;
+    border-right: 2px solid rgba(0,0,0,1);
+    text-align: center;
+  }
+</style>
 <body>
 
     <header class="site-header">
@@ -30,6 +36,7 @@
           <div class="collapse navbar-collapse" id="navbarToggle">
             <div class="navbar-nav mr-auto">
               <a class="nav-item nav-link" href="{% url 'blog-home'%}">Home</a>
+              <a class="nav-item nav-link" href="{% url 'deals-home'%}">Deals</a>
               <a class="nav-item nav-link" href="{% url 'blog-about'%}">About</a>
             </div>
             <!-- Navbar Right Side -->
@@ -37,6 +44,7 @@
             {% if user.is_authenticated %}
             {% if CurrentUserCanPost %}
             <a class="nav-item nav-link" href="{% url 'post-create'%}">New Post</a>
+            <a class="nav-item nav-link" href="{% url 'deal-create'%}">New deal</a>
             {% endif %}
             <img src="{{ user.profile.image.url }}" class="rounded-circle article-img nav-img" alt="user-image">
 
@@ -68,7 +76,7 @@
             {% endblock %}
           </div>
           <div class="col-md-4">
-            <div class="content-section">
+            <!-- <div class="content-section">
               <h3>Our Sidebar</h3>
               <p class='text-muted'>You can put any information here you'd like.
                 <ul class="list-group">
@@ -78,6 +86,40 @@
                   <li class="list-group-item list-group-item-light">etc</li>
                 </ul>
               </p>
+            </div> -->
+            <div class="content-section">
+              <h3>Latest Deals</h3>
+              {% for deal in Deals%}
+              <p style="font-weight: bold; margin-bottom: 2px;"><a href="{% url 'deal-detail' deal.id %}"> Deal #{{deal.id}} </a></p>
+                <ul class="list-group" >
+                  <div style=" border: 1px solid rgba(0,0,0,0.125); display: grid; grid-template-columns: repeat(2, 1fr);
+                  grid-template-rows: 1fr 1fr; text-transform: capitalize;">
+                    <div class="deal-row">
+                      Title     
+                    </div>
+                    <div style="margin-left: 10px;">  {{ deal.title }} </div>
+                    <div class="deal-row">
+                      Cost     
+                    </div>
+                    <div style="margin-left: 10px;">  {{ deal.price }} {{ deal.currency}} </div>
+                    <div class="deal-row">
+                      Status     
+                    </div>
+                    {% if deal.status == "lost" %}
+                    <div style="margin-left: 10px; color: red; font-weight: bold;" >  {{ deal.status }} </div>
+                    {% elif deal.status == "won" %}
+                    <div style="margin-left: 10px; color: rgb(5, 160, 5); font-weight: bold" >  {{ deal.status }} </div>
+                    {% else %}
+                    <div style="margin-left: 10px; color: cornflowerblue;" >  {{ deal.status }} </div>
+                    {% endif %}
+                  </div>
+                  {% endfor %}
+                 
+                  <!-- <li class="list-group-item list-group-item-light"> <span style="border-right: 2px solid;">Title </span> <span>Brighton Circle </span></li>
+                  <li class="list-group-item list-group-item-light"> <span style="border-right: 2px solid;">Cost </span> 250$</li>
+                  <li class="list-group-item list-group-item-light"> <span style="border-right: 2px solid;">Status </span> offer delivered</li> -->
+                  <!-- <li class="list-group-item list-group-item-light">etc</li> -->
+                </ul>
             </div>
           </div>
         </div>

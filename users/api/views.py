@@ -11,8 +11,8 @@ from .serializers import (RegisterUserSerializer,
  ProfileSerializer)
 
 from rest_framework.authtoken.models import Token
-
-
+from users.views import register_backend 
+import requests
 
 @api_view(['POST'])
 def registration(request):
@@ -21,11 +21,11 @@ def registration(request):
         data = {}
         if serializer.is_valid():
             user = serializer.save()
-            data ['response'] = 'succefulklly registered a new user'
+            data ['response'] = 'succefully registered a new user'
             data ['email'] = user.email
             data ['username'] = user.username
-            token = Token.objects.get(user=user).key
-            data ['token'] = token
+            # token = Token.objects.get(user=user).key
+            # data ['token'] = token
         else:
             data = serializer.errors
         return Response(data)
@@ -65,6 +65,12 @@ def user_update(request):
         data = {}
         if user_serializer.is_valid() and profile_serializer.is_valid():
             user_serializer.save()
+            #! for backend based update the user in the backend
+            data = user_serializer.data
+            data['id'] = request.user.id
+            print(data," my data")
+            response = requests.put('http://127.0.0.1:8001/api/users/user-update', data = data, headers={ 'Authorization': 'Token e9e3d12642ed1b16a093d24951ed9efed1de413c'})
+
             profile_serializer.save()
             data['response'] = 'User infomation updated succefully'
             return Response( data=data)

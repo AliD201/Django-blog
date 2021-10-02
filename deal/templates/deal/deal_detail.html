@@ -1,0 +1,35 @@
+{% extends 'blog/base.html'%}
+
+{% block content %}
+    <article class="media content-section">
+        <div class="media-body">
+          <div class="article-metadata">
+            <a class="mr-2" href="{% url 'user-deals' object.handler %}">{{ object.handler }}</a>
+            <small class="text-muted">{{ object.date_created }}   - last update {{object.last_update}}</small>
+
+            {% if canEdit %}
+            <div>
+                <a href="{% url 'deal-update' object.id %}" class="btn btn-secondary btn-sm mt-1 mb-2"> Edit</a>
+                {% if canDelete %}
+                <a href="{% url 'deal-delete' object.id %}" class="btn btn-danger btn-sm mt-1 mb-2"> Delete</a>
+                {% endif %}
+            </div>
+            {% endif %}
+          </div>
+          <h2 class="article-title" style="display: inline-block;"> {{ object.title }} 	&nbsp;	&nbsp;<h5 style="display: inline-block;"> {{ object.price}} {{ object.currency}}</h5></h2>
+          <p>{% if object.status == "lost" %}<span style="text-transform: capitalize; color: red; " >  {{ object.status }} </span>
+            {% elif object.status == "won" %}<span style="text-transform: capitalize; color: rgb(5, 160, 5);" >  {{ object.status }} </span>
+            {% else %}<span style="text-transform: capitalize; color: cornflowerblue;" >  {{ object.status }} </span>
+            {% endif %}</p>
+
+          <hr>
+          <p class="article-content">
+            Last deal Update: {{ object.last_update}}
+            Deal close time: {{object.close_time}}
+            Deal Won time: {{object.won_time}}
+            Deal Loss time: {{object.lost_time}}
+            
+            </p>
+        </div>
+    </article>
+{% endblock content %}
