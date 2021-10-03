@@ -28,11 +28,7 @@ SECRET_KEY = '^4&$3fg31e$pi=jpszw@_+qjkvhgjc9$pzi(ixp$sjh3%5xz71'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    '192.168.8.100',
-    '127.0.0.1',
-    '192.168.43.221'
-]
+ALLOWED_HOSTS = []
 
 # Application definition
 
@@ -145,8 +141,8 @@ CACHES = {
     }
 }
 
-PIPEDRIVE_TOKEN = '65fbf2612b2f117e754d51246c936b66d837c81f'
-PIPEDRIVE_DOMAIN = 'kfu'
+PIPEDRIVE_TOKEN = ''
+PIPEDRIVE_DOMAIN = ''
 
 #REST frame work auth 
 REST_FRAMEWORK = {
